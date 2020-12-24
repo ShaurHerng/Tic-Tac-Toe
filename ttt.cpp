@@ -122,7 +122,7 @@ int TTT::checkWin(void)
 
     tempW = tempH = 0;
 
-    
+    /*
     // check win conditions (diagonal) for perfect squares
     for (tempH = tempW = 0; tempH < m_height; tempW++, tempH++)
     {
@@ -143,6 +143,72 @@ int TTT::checkWin(void)
             }
         }
     }
+    */
+
+    // check win condition for square (all sizes)
+    for (tempH = tempW = temp = 0; tempH < m_height; ++tempH)
+    {
+        
+        if (m_arr[tempH][tempW] != 0)
+        {
+            // check upperleft -> lowerright
+            while (m_arr[tempH + temp][tempW + temp] == m_arr[tempH][0] && tempH + temp < m_height && tempW + temp < m_width)
+            {
+                temp++;
+                if (temp == m_winLen)
+                {
+                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
+                    return 1;
+                }
+            }
+
+            temp = 0;
+            
+            // check lowerleft -> upperright
+            while (m_arr[tempH - temp][tempW + temp] == m_arr[tempH][0] && tempH - temp > 0 && tempW + temp < m_width)
+            {
+                temp++;
+                if (temp == m_winLen)
+                {
+                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
+                    return 1;
+                }
+            }
+
+        }
+
+        temp = 0;
+
+        if (m_arr[tempH][m_width - 1] != 0)
+        {
+            // check lowerright -> upperleft
+            while (m_arr[tempH - temp][m_width - temp - 1] == m_arr[tempH][m_width - 1] && tempH - temp > 0 && m_width - temp - 1 > 0)
+            {
+                temp++;
+                if (temp == m_winLen)
+                {
+                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
+                    return 1;
+                }
+            }
+
+            temp = 0;
+
+            // check upperright -> lowerleft
+            while (m_arr[tempH + temp][m_width - temp - 1] == m_arr[tempH][m_width - 1] && tempH + temp < m_height && m_width - temp - 1 > 0)
+            {
+                temp++;
+                if (temp == m_winLen)
+                {
+                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
+                    return 1;
+                }
+            }
+        }
+    }
+
+    // check for win conditions from other diagonal side
+    
     
    return 0;
 }
@@ -163,11 +229,11 @@ void TTT::start(void)
         do
         {
 
-            cout << "Player " << (temp % 3) + 1 << " please enter width & height: ";
+            cout << "Player " << (temp % m_numPlayers) + 1 << " please enter width & height: ";
             cin >> tempW >> tempH;
 
 
-        } while(!makeMove(tempW, tempH, (temp % 3) + 1));
+        } while(!makeMove(tempW, tempH, (temp % m_numPlayers) + 1));
 
         temp++;
 
