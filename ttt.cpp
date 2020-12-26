@@ -84,6 +84,8 @@ int TTT::checkWin(void)
 {
     int temp, tempH, tempW;
 
+    cerr << "Enter checking...\n";
+
     // check win conditions (across)
     for (tempH = 0; tempH < m_height; ++tempH)
     {
@@ -101,6 +103,8 @@ int TTT::checkWin(void)
             }
         }
     }
+
+    cerr << "Finish across...\n";
 
     // check win conditions (down)
     for (tempW = 0; tempW < m_width; ++tempW)
@@ -120,95 +124,113 @@ int TTT::checkWin(void)
         }
     }
 
-    tempW = tempH = 0;
-
-    /*
-    // check win conditions (diagonal) for perfect squares
-    for (tempH = tempW = 0; tempH < m_height; tempW++, tempH++)
-    {
-        if (m_arr[tempH][tempW] != 0 && m_arr[tempH][tempW] == m_arr[0][0])
-        {
-            if (tempH == m_winLen - 1)
-            {
-                cout << "Player " << m_arr[0][0] << " won!\n";
-                return 1;
-            }  
-        }
-        else if (m_arr[m_height - 1 - tempH][m_width - 1 - tempW] != 0 && m_arr[m_height - tempH - 1][m_width - tempW - 1] == m_arr[0][m_width - 1])
-        {
-            if (tempH == 0)
-            {
-                cout << "Player " << m_arr[0][m_width - 1] << " won!\n";
-                return 1;
-            }
-        }
-    }
-    */
+    cerr << "Finish down...\n";
 
     // check win condition for square (all sizes)
-    for (tempH = tempW = temp = 0; tempH < m_height; ++tempH)
+    for (tempH = tempW = 0; tempH < m_height; ++tempH)
     {
         
         if (m_arr[tempH][tempW] != 0)
         {
+            temp = 0;
+
+            cerr << "checking upperleft -> lowerright...\n";
+
             // check upperleft -> lowerright
-            while (m_arr[tempH + temp][tempW + temp] == m_arr[tempH][0] && tempH + temp < m_height && tempW + temp < m_width)
+            while (tempH + temp < m_height && tempW + temp < m_width)
             {
-                temp++;
-                if (temp == m_winLen)
+                
+                if (m_arr[tempH + temp][tempW + temp] != m_arr[tempH][0])
+                {
+                    break;
+                }
+
+                else if (temp == m_winLen - 1)
                 {
                     cout << "Player " << m_arr[tempH][tempW] << " won!\n";
                     return 1;
                 }
+
+                temp++;
             }
 
             temp = 0;
+
+            cerr << "checking lowerleft -> upperright...\n";
             
             // check lowerleft -> upperright
-            while (m_arr[tempH - temp][tempW + temp] == m_arr[tempH][0] && tempH - temp > 0 && tempW + temp < m_width)
+            while (tempH - temp > 0 && tempW + temp < m_width)
             {
-                temp++;
-                if (temp == m_winLen)
+                if (m_arr[tempH - temp][tempW + temp] != m_arr[tempH][0])
+                {
+                    break;
+                }
+                else if (temp == m_winLen - 1)
                 {
                     cout << "Player " << m_arr[tempH][tempW] << " won!\n";
                     return 1;
                 }
+
+                temp++;
             }
 
         }
 
         temp = 0;
 
+        cerr << "Finish diagonal 1...\n";
+
         if (m_arr[tempH][m_width - 1] != 0)
         {
+            temp = 0;
+
+            cerr << "Checking lowerright -> upperleft...\n";
+
             // check lowerright -> upperleft
-            while (m_arr[tempH - temp][m_width - temp - 1] == m_arr[tempH][m_width - 1] && tempH - temp > 0 && m_width - temp - 1 > 0)
+            while (tempH - temp > 0 && m_width - temp - 1 > 0)
             {
-                temp++;
-                if (temp == m_winLen)
+                if (m_arr[tempH - temp][m_width - temp - 1] != m_arr[tempH][m_width - 1])
+                {
+                    break;
+                }
+                
+                else if (temp == m_winLen - 1)
                 {
                     cout << "Player " << m_arr[tempH][tempW] << " won!\n";
                     return 1;
                 }
+
+                temp++;
             }
 
             temp = 0;
 
+            cerr << "Checking upperright -> lowerleft...\n";
+
             // check upperright -> lowerleft
-            while (m_arr[tempH + temp][m_width - temp - 1] == m_arr[tempH][m_width - 1] && tempH + temp < m_height && m_width - temp - 1 > 0)
+            while (tempH + temp < m_height && m_width - temp - 1 > 0)
             {
-                temp++;
-                if (temp == m_winLen)
+                if (m_arr[tempH + temp][m_width - temp - 1] != m_arr[tempH][m_width - 1])
+                {
+                    break;
+                }
+
+                else if (temp == m_winLen - 1)
                 {
                     cout << "Player " << m_arr[tempH][tempW] << " won!\n";
                     return 1;
                 }
+
+                temp++;
             }
+
+            cerr << "iteration...\n";
         }
     }
 
     // check for win conditions from other diagonal side
     
+    cerr << "Finish checking...\n";
     
    return 0;
 }
