@@ -78,171 +78,287 @@ bool TTT::makeMove(int width, int height, int player)
     return false;
 }
 
-
-
-int TTT::checkWin(void)
+int TTT::checkWin()
 {
-    int temp, tempH, tempW;
+    int temp = 0;
+    int tempH = 0;
+    int tempW = 0;
+    int len = 0;
+    int m_currentPlayer;
+    bool m_isStart = true;
 
-    cerr << "Enter checking...\n";
-
-    // check win conditions (across)
     for (tempH = 0; tempH < m_height; ++tempH)
     {
-        for (tempW = 0; tempW < m_width; ++tempW)
+        tempW = 0;
+        m_isStart = true;
+
+        // win check for across (all dimensions)
+        while(tempW < m_width)
         {
-            if (m_arr[tempH][tempW] == 0 || m_arr[tempH][tempW] != m_arr[tempH][0])
+            if (m_isStart)
             {
-                break;
-            }
-
-            if (tempW == m_winLen - 1)
-            {
-                cout << "Player " << m_arr[tempH][0] << " won!\n";
-                return 1;
-            }
-        }
-    }
-
-    cerr << "Finish across...\n";
-
-    // check win conditions (down)
-    for (tempW = 0; tempW < m_width; ++tempW)
-    {
-        for (tempH = 0; tempH < m_width; ++tempH)
-        {
-            if (m_arr[tempH][tempW] == 0 || m_arr[tempH][tempW] != m_arr[0][tempW])
-            {
-                break;
-            }
-
-            if (tempH == m_winLen - 1)
-            {
-                cout << "Player " << m_arr[0][tempW] << " won!\n";
-                return 1;
-            }
-        }
-    }
-
-    cerr << "Finish down...\n";
-
-    // check win condition for square (all sizes)
-    for (tempH = tempW = 0; tempH < m_height; ++tempH)
-    {
-        
-        if (m_arr[tempH][tempW] != 0)
-        {
-            temp = 0;
-
-            cerr << "checking upperleft -> lowerright...\n";
-
-            // check upperleft -> lowerright
-            while (tempH + temp < m_height && tempW + temp < m_width)
-            {
+                if (m_arr[tempH][tempW] != 0)
+                {
+                    m_currentPlayer = m_arr[tempH][tempW];
+                    m_isStart = false;
+                    len = 1;
+                    ++tempW;
+                }
+                else
+                {
+                    ++tempW;
+                }
                 
-                if (m_arr[tempH + temp][tempW + temp] != m_arr[tempH][0])
-                {
-                    break;
-                }
-
-                else if (temp == m_winLen - 1)
-                {
-                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
-                    return 1;
-                }
-
-                temp++;
+                
             }
-
-            temp = 0;
-
-            cerr << "checking lowerleft -> upperright...\n";
-            
-            // check lowerleft -> upperright
-            while (tempH - temp > 0 && tempW + temp < m_width)
+            else if (m_arr[tempH][tempW] == m_currentPlayer)
             {
-                if (m_arr[tempH - temp][tempW + temp] != m_arr[tempH][0])
-                {
-                    break;
-                }
-                else if (temp == m_winLen - 1)
-                {
-                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
-                    return 1;
-                }
-
-                temp++;
+                ++len;
+                ++tempW;
+            }
+            else 
+            {
+                m_isStart = true; 
             }
 
+            if (len == m_winLen)
+            {
+                return m_currentPlayer;
+            }
         }
+
+        cerr << "Finish across\n";
 
         temp = 0;
+        tempW = 0;
+        m_isStart = true;
 
-        cerr << "Finish diagonal 1...\n";
-
-        if (m_arr[tempH][m_width - 1] != 0)
+        // win check for diagonal from the left column (topleft -> bottomright) 4 O'clock
+        while (tempH + temp < m_height && tempW < m_width)
         {
-            temp = 0;
-
-            cerr << "Checking lowerright -> upperleft...\n";
-
-            // check lowerright -> upperleft
-            while (tempH - temp > 0 && m_width - temp - 1 > 0)
+            if (m_isStart)
             {
-                if (m_arr[tempH - temp][m_width - temp - 1] != m_arr[tempH][m_width - 1])
+                if (m_arr[tempH + temp][tempW] != 0)
                 {
-                    break;
+                    m_isStart = false;
+                    m_currentPlayer = m_arr[tempH + temp][tempW];
+                    tempW++;
+                    temp++;
+                    len = 1;
+                }
+                else
+                {
+                    tempW++;
+                    temp++;
                 }
                 
-                else if (temp == m_winLen - 1)
-                {
-                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
-                    return 1;
-                }
-
-                temp++;
             }
-
-            temp = 0;
-
-            cerr << "Checking upperright -> lowerleft...\n";
-
-            // check upperright -> lowerleft
-            while (tempH + temp < m_height && m_width - temp - 1 > 0)
+            else if (m_arr[tempH + temp][tempW] == m_currentPlayer)
             {
-                if (m_arr[tempH + temp][m_width - temp - 1] != m_arr[tempH][m_width - 1])
-                {
-                    break;
-                }
-
-                else if (temp == m_winLen - 1)
-                {
-                    cout << "Player " << m_arr[tempH][tempW] << " won!\n";
-                    return 1;
-                }
-
+                len++;
                 temp++;
+                tempW++;
+            }
+            else
+            {
+                m_isStart = true;
             }
 
-            cerr << "iteration...\n";
+            if (len == m_winLen)
+            {
+                return m_currentPlayer;
+            }
+        }
+
+        cerr << "Finish left column topleft->bottomright 4 o'clock\n";
+
+        temp = 0;
+        tempW = 0;
+        m_isStart = true;
+
+        // win check for diagonal from the left column (bottomleft -> topright) 2 O'clock
+        while (tempH - temp >= 0 && tempW < m_width)
+        {
+            if (m_isStart)
+            {
+                if (m_arr[tempH - temp][tempW] != 0)
+                {
+                    m_isStart = false;
+                    m_currentPlayer = m_arr[tempH - temp][tempW];
+                    tempW++;
+                    temp++;
+                    len = 1;
+                }
+                else
+                {
+                    tempW++;
+                    temp++;
+                }
+                
+            }
+            else if (m_arr[tempH - temp][tempW] == m_currentPlayer)
+            {
+                len++;
+                temp++;
+                tempW++;
+            }
+            else
+            {
+                m_isStart = true;
+            }
+
+            if (len == m_winLen)
+            {
+                return m_currentPlayer;
+            }
+        }
+
+        cerr << "Finish left column (bottomleft -> topright) 2 O'clock\n";
+
+        temp = 0;
+        tempW = m_width - 1;
+        m_isStart = true;        
+
+        // win check for diagonal (bottomleft -> topright) 11 O'clock
+        if (tempH != m_height - 1)
+        {
+            while (tempH - temp >= 0 && tempW > 0)
+            {
+                if (m_isStart)
+                {
+                    if (m_arr[tempH - temp][tempW] != 0)
+                    {
+                        m_isStart = false;
+                        m_currentPlayer = m_arr[tempH - temp][tempW];
+                        tempW--;
+                        temp++;
+                        len = 1;
+                    }
+                    else
+                    {
+                        tempW--;
+                        temp++;
+                    }
+                    
+                }
+                else if (m_arr[tempH - temp][tempW] == m_currentPlayer)
+                {
+                    len++;
+                    temp++;
+                    tempW--;
+                }
+                else
+                {
+                    m_isStart = true;
+                }
+
+                if (len == m_winLen)
+                {
+                    return m_currentPlayer;
+                }   
+            }
+        }
+
+        cerr << "Finish diagonal (bottomleft -> topright) 11 O'clock\n";
+
+        temp = 0;
+        tempW = m_width - 1;
+        m_isStart = true;        
+
+        // win check for diagonal (topright -> bottomleft) 8 O'clock
+        if (tempH != 0)
+        {
+            while (tempH + temp < m_height && tempW > 0)
+            {
+                if (m_isStart)
+                {
+                    if (m_arr[tempH + temp][tempW] != 0)
+                    {
+                        m_isStart = false;
+                        m_currentPlayer = m_arr[tempH + temp][tempW];
+                        tempW--;
+                        temp++;
+                        len = 1;
+                    }
+                    else
+                    {
+                        tempW--;
+                        temp++;
+                    }
+                    
+                }
+                else if (m_arr[tempH + temp][tempW] == m_currentPlayer)
+                {
+                    len++;
+                    temp++;
+                    tempW--;
+                }
+                else
+                {
+                    m_isStart = true;
+                }
+
+                if (len == m_winLen)
+                {
+                    return m_currentPlayer;
+                }   
+            }
+        }
+
+        cerr << "Finish diagonal (topright -> bottomleft) 8 O'clock\n";
+    }
+    // win check for down (all dimensions)
+    for (tempW = 0; tempW < m_width; ++tempW)
+    {
+        tempH = 0;
+        m_isStart = true;
+
+        while(tempH < m_height)
+        {
+            if (m_isStart)
+            {
+                if (m_arr[tempH][tempW] != 0)
+                {
+                    m_currentPlayer = m_arr[tempH][tempW];
+                    m_isStart = false;
+                    len = 1;
+                    ++tempH;
+                }
+                else
+                {
+                    tempH++;
+                }
+                
+                
+            }
+            else if (m_arr[tempH][tempW] == m_currentPlayer)
+            {
+                ++len;
+                ++tempH;
+            }
+            else 
+            {
+                m_isStart = true; 
+            }
+
+            if (len == m_winLen)
+            {
+                return m_currentPlayer;
+            }
         }
     }
+    cerr << "Finish down checking\n";
 
-    // check for win conditions from other diagonal side
-    
-    cerr << "Finish checking...\n";
-    
-   return 0;
+    return false;
 }
-
-
 
 void TTT::start(void)
 {
     int temp = 0;
     int tempH, tempW;
+    int winner = 0;
 
-    while(!checkWin())
+    while(!winner)
     {
         system("clear");
 
@@ -259,7 +375,11 @@ void TTT::start(void)
 
         temp++;
 
+        winner = checkWin();
+
     }
 
+    system("clear");
     cout << "Game Finished!!\n";
+    cout << "Player " << winner << " Won!!!\n\n";
 }
