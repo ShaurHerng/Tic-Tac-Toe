@@ -47,6 +47,7 @@ void cMain::OnButtonClicked(wxCommandEvent &evt)
 
     if (winner != -1)
     {
+        //endMessage(winner);
         cerr << "you won\n";
         cerr << winner << endl;
         panel->Destroy();
@@ -56,6 +57,7 @@ void cMain::OnButtonClicked(wxCommandEvent &evt)
 
     if (total_moves_made == (m_height * m_width))
     {
+        //endMessage(0);
         cerr << "draw\n";
         panel->Destroy();
     }
@@ -89,7 +91,7 @@ void cMain::OnStartInfoInput(wxCommandEvent &evt)
     grid = new wxGridSizer(m_height, m_width, 0, 0);
     m_arr = new int*[m_height];
     m_turn_string = wxString::Format(wxT("Player %i's turn"), 1);
-    m_curr_turn = new wxStaticText(panel, wxID_ANY, m_turn_string, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+    m_curr_turn = new wxStaticText(panel, wxID_ANY, m_turn_string, wxDefaultPosition, wxSize(100, 50), wxALIGN_CENTER_HORIZONTAL);
     box->Add(m_curr_turn);
 
     for (int i = 0; i < m_height; i++)
@@ -106,12 +108,21 @@ void cMain::OnStartInfoInput(wxCommandEvent &evt)
     }
 
     box->Add(grid);
-    panel->SetSizer(box);
+    panel->SetSizerAndFit(box);
     grid->Layout();
     box->Layout();
-    this->SetSize(0, 0, 860, 860);
+    //this->SetSize(0, 0, 860, 860);
     this->CentreOnScreen();
     panel->SetSize(this->GetClientSize());
+    box->SetDimension(wxDefaultPosition, panel->GetClientSize());
+    box->Layout();
+
+    if (this->GetClientSize() == panel->GetClientSize())
+    {
+        cout << "YASSSSSS\n";
+    }
+
+    
 }
 
 int cMain::Reset(void)
@@ -144,6 +155,19 @@ int cMain::Reset(void)
     grid->Layout();
     box->Layout();
     panel->Show(true);
+}
+
+int cMain::endMessage(int state)
+{
+    panel->Destroy();
+    panel = new wxPanel(this, wxID_ANY);
+
+    // draw
+    if (state == 0)
+    {
+        
+
+    }
 }
 
 int cMain::checkWin(void)

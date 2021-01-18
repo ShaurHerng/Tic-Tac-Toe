@@ -47,6 +47,8 @@ private:
 
     int Reset(void);
 
+    int endMessage(int state);
+
     wxDECLARE_EVENT_TABLE();
 
 };
