@@ -20,19 +20,35 @@ void cMain::OnButtonClicked(wxCommandEvent &evt)
     int x = (evt.GetId() - 10000) % m_height;
     int y = (evt.GetId() - 10000) / m_height;
 
-    int curr_player = total_moves_made % num_players;
-    wxString curr_player_string = wxString::Format(wxT("%i"), curr_player);
+    int curr_player = (total_moves_made % num_players) + 1;
+    int next_player = ((total_moves_made + 1) % num_players) + 1;
+    m_turn_string = wxString::Format(wxT("Player %i's turn"), next_player);
+    m_curr_turn->SetLabel(m_turn_string);
+    m_curr_turn->Refresh();
 
     btn[x + y * m_height]->Enable(false);
-    btn[x + y * m_height]->SetLabel(curr_player_string);
+    btn[x + y * m_height]->SetLabel(wxString::Format(wxT("%i"), curr_player));
     m_arr[y][x] = curr_player;
+
+    for (int i = 0 ; i < m_width; i++)
+    {
+        for (int j = 0; j < m_height; j++)
+        {
+            cout << m_arr[i][j];
+        }
+
+        cout << endl;
+    }
     
 
     int winner = checkWin();    
 
-    if (winner != 0)
+    cerr << winner << endl;
+
+    if (winner != -1)
     {
         cerr << "you won\n";
+        cerr << winner << endl;
         panel->Destroy();
     }
     
@@ -72,7 +88,7 @@ void cMain::OnStartInfoInput(wxCommandEvent &evt)
     btn = new wxButton*[m_height * m_width];
     grid = new wxGridSizer(m_height, m_width, 0, 0);
     m_arr = new int*[m_height];
-    m_turn_string = wxString::Format(wxT("Player %i's turn"), 0);
+    m_turn_string = wxString::Format(wxT("Player %i's turn"), 1);
     m_curr_turn = new wxStaticText(panel, wxID_ANY, m_turn_string, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
     box->Add(m_curr_turn);
 
@@ -95,6 +111,7 @@ void cMain::OnStartInfoInput(wxCommandEvent &evt)
     box->Layout();
     this->SetSize(0, 0, 860, 860);
     this->CentreOnScreen();
+    panel->SetSize(this->GetClientSize());
 }
 
 int cMain::Reset(void)
@@ -178,7 +195,7 @@ int cMain::checkWin(void)
             }
         }
 
-        cerr << "Finish across\n";
+        //cerr << "Finish across\n";
 
         temp = 0;
         tempW = 0;
@@ -221,7 +238,7 @@ int cMain::checkWin(void)
             }
         }
 
-        cerr << "Finish left column topleft->bottomright 4 o'clock\n";
+        //cerr << "Finish left column topleft->bottomright 4 o'clock\n";
 
         temp = 0;
         tempW = 0;
@@ -264,7 +281,7 @@ int cMain::checkWin(void)
             }
         }
 
-        cerr << "Finish left column (bottomleft -> topright) 2 O'clock\n";
+        //cerr << "Finish left column (bottomleft -> topright) 2 O'clock\n";
 
         temp = 0;
         tempW = m_width - 1;
@@ -310,7 +327,7 @@ int cMain::checkWin(void)
             }
         }
 
-        cerr << "Finish diagonal (bottomleft -> topright) 11 O'clock\n";
+        //cerr << "Finish diagonal (bottomleft -> topright) 11 O'clock\n";
 
         temp = 0;
         tempW = m_width - 1;
@@ -356,7 +373,7 @@ int cMain::checkWin(void)
             }
         }
 
-        cerr << "Finish diagonal (topright -> bottomleft) 8 O'clock\n";
+        //cerr << "Finish diagonal (topright -> bottomleft) 8 O'clock\n";
     }
     // win check for down (all dimensions)
     for (tempW = 0; tempW < m_width; ++tempW)
@@ -398,9 +415,9 @@ int cMain::checkWin(void)
             }
         }
     }
-    cerr << "Finish down checking\n";
+    //cerr << "Finish down checking\n";
 
-    return 0;;
+    return -1;
 }
 
 
